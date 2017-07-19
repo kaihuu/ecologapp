@@ -2,5 +2,7 @@
 <script>
 Graph(gon.xdata, gon.ydata, gon.colordata);
 </script>
-<%= link_to '更新',{ action: :index }, remote:true %>
-<%= select_tag :strip, options_from_collection_for_select(@trips, :TRIP_ID, :START_TIME) %> 
+<%= form_tag({ action: :index }, remote:true) do %>
+    <%= select_tag :strip, options_from_collection_for_select(@trips, :TRIP_ID, :START_TIME) %>
+    <%= submit_tag '更新' %>
+<% end %>
