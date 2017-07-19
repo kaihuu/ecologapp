@@ -1,4 +1,6 @@
-<div id="myDiv"></div>
+<div id="myDiv" style="width:100%; height:100%;"></div>
 <script>
-Graph();
+Graph(gon.xdata, gon.ydata, gon.colordata);
 </script>
+<%= link_to '更新',{ action: :index }, remote:true %>
+<%= select_tag :strip, options_from_collection_for_select(@trips, :TRIP_ID, :START_TIME) %> 

@@ -1,0 +1,1 @@
+Graph(gon.xdata, gon.ydata, gon.colordata);
