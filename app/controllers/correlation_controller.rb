@@ -1,21 +1,25 @@
 class CorrelationController < ApplicationController
   def index
-   @p = params[:strip][:TRIP_ID].try(:[], :TRIP_ID)
+    binding.pry
+    id =  params[:strip].to_i
    @val = Trip.new
-   @trips = Trip.all
+   @trips = Trip.where("TRIP_ID > ?", id)
+   #@trips = Trip.where(TRIP_ID: id)
+   a=Trip.attribute_names
    tripid = []
    start = []
    consumed = []
-   
+
    @trips.each do |t|
     tripid.push(t.TRIP_ID)
     start.push(t.START_TIME)
     consumed.push(t.CONSUMED_ENERGY)
    end
-   
-   gon.xdata = start
-   gon.ydata = tripid
-   gon.colordata = consumed
+   #binding.pry
+   gon.clear
+   gon.watch.xdata = start
+   gon.watch.ydata = tripid
+   gon.watch.colordata = consumed
   end
 
   def view
@@ -32,9 +36,9 @@ class CorrelationController < ApplicationController
     consumed.push(t.CONSUMED_ENERGY)
    end
    
-   gon.xdata = start
-   gon.ydata = tripid
-   gon.colordata = consumed
+   gon.watch.xdata = start
+   gon.watch.ydata = tripid
+   gon.watch.colordata = consumed
   end
   
 end

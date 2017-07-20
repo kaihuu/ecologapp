@@ -1,8 +1,9 @@
-<div id="myDiv" style="width:100%; height:100%;"></div>
+<div id="myDiv" ></div>
 <script>
+
 Graph(gon.xdata, gon.ydata, gon.colordata);
 </script>
-<%= form_tag({ action: :index }, remote:true) do %>
-    <%= select_tag :strip, options_from_collection_for_select(@trips, :TRIP_ID, :START_TIME) %>
+<%= form_tag({ action: 'index' }, remote:true) do %>
+    <%= select_tag :strip, options_from_collection_for_select(@trips, :TRIP_ID, :TRIP_ID) %>
     <%= submit_tag '更新' %>
 <% end %>
