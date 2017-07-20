@@ -1,6 +1,6 @@
 class CorrelationController < ApplicationController
   def index
-    binding.pry
+    #binding.pry
     id =  params[:strip].to_i
    @val = Trip.new
    @trips = Trip.where("TRIP_ID > ?", id)
@@ -16,10 +16,9 @@ class CorrelationController < ApplicationController
     consumed.push(t.CONSUMED_ENERGY)
    end
    #binding.pry
-   gon.clear
-   gon.watch.xdata = start
-   gon.watch.ydata = tripid
-   gon.watch.colordata = consumed
+   @xdata = start.to_json.html_safe
+   @ydata = tripid.to_json.html_safe
+   @colordata = consumed.to_json.html_safe
   end
 
   def view
@@ -36,9 +35,9 @@ class CorrelationController < ApplicationController
     consumed.push(t.CONSUMED_ENERGY)
    end
    
-   gon.watch.xdata = start
-   gon.watch.ydata = tripid
-   gon.watch.colordata = consumed
+   @xdata = start.to_json.html_safe
+   @ydata = tripid.to_json.html_safe
+   @colordata = consumed.to_json.html_safe
   end
   
 end

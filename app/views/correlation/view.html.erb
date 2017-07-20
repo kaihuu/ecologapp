@@ -1,7 +1,12 @@
 <div id="myDiv" ></div>
 <script>
+var x = <%= @xdata %>;
 
-Graph(gon.xdata, gon.ydata, gon.colordata);
+var y = <%= @ydata %>;
+
+var c = <%= @colordata %>;
+
+Graph(x, y, c);
 </script>
 <%= form_tag({ action: 'index' }, remote:true) do %>
     <%= select_tag :strip, options_from_collection_for_select(@trips, :TRIP_ID, :TRIP_ID) %>
