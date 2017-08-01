@@ -526,6 +526,60 @@ ActiveRecord::Schema.define(version: 20170705052757) do
     t.index ["TRIP_ID"], name: "leafspyall"
   end
 
+  create_table "LEAFSPY_RAW2", primary_key: ["DRIVER_ID", "CAR_ID", "DATETIME"], force: :cascade do |t|
+    t.integer "TRIP_ID"
+    t.integer "DRIVER_ID", null: false
+    t.integer "CAR_ID", null: false
+    t.datetime "DATETIME", null: false
+    t.real "LAT"
+    t.real "LONG"
+    t.real "ELV"
+    t.real "SPEED"
+    t.integer "GIDS"
+    t.integer "SOC"
+    t.integer "AHR"
+    t.real "PACK_VOLTS"
+    t.real "PACK_AMPS"
+    t.integer "MAX_CP_mV"
+    t.integer "MIN_CP_mV"
+    t.integer "AVG_CP_mV"
+    t.integer "CP_mV_DIFF"
+    t.integer "JUDGEMENT_VALUE"
+    t.real "PACK_T1_F"
+    t.real "PACK_T1_C"
+    t.real "PACK_T2_F"
+    t.real "PACK_T2_C"
+    t.real "PACK_T3_F"
+    t.real "PACK_T3_C"
+    t.real "PACK_T4_F"
+    t.real "PACK_T4_C"
+    t.real "BATVOLT"
+    t.varchar "VIN", limit: 10
+    t.real "HX"
+    t.real "RAW_12_BAT"
+    t.integer "ODO_km"
+    t.integer "QC"
+    t.nchar "L1_L2", limit: 10
+    t.integer "TP_FL"
+    t.integer "TP_FR"
+    t.integer "TP_RR"
+    t.integer "TP_RL"
+    t.integer "AMBIENT"
+    t.integer "SOH"
+    t.integer "REGENWh"
+    t.integer "BLEVEL"
+    t.integer "EPOCH_TIME"
+    t.integer "MOTOR_PWR_100W"
+    t.integer "AUX_PWR_100W"
+    t.integer "AC_PWR_250W"
+    t.integer "AC_PSI"
+    t.integer "EST_PWR_AC_250W"
+    t.integer "EST_PWR_HTR_250W"
+    t.integer "PLUG_STATE"
+    t.integer "CHARGE_MODE"
+    t.integer "OBC_OUT_PWR"
+  end
+
   create_table "LEAFSPY_RAW_FULLCHARGELOSS", primary_key: ["EXPERIMENT_ID", "DATETIME"], force: :cascade do |t|
     t.integer "EXPERIMENT_ID", null: false
     t.integer "DRIVER_ID", null: false
@@ -639,16 +693,16 @@ ActiveRecord::Schema.define(version: 20170705052757) do
     t.integer "SENSOR_ID", null: false
   end
 
-  create_table "MEMOS", id: false, force: :cascade do |t|
+  create_table "MEMOS", primary_key: ["DATE", "TRIP_DIRECTION"], force: :cascade do |t|
     t.date "DATE", null: false
-    t.varchar "TRIP_DIRECTION", limit: 50
+    t.varchar "TRIP_DIRECTION", limit: 50, null: false
     t.boolean "HODOGAYA"
     t.boolean "A/C"
     t.boolean "DEFROSTER"
     t.boolean "TIMER"
     t.integer "CH"
     t.integer "START_GIDS"
-    t.boolean "END_GIDS"
+    t.integer "END_GIDS"
     t.float "AVERAGE_ELECTRICITY_EXPENSE"
     t.boolean "ELECTRICITY_EXPENSE_RESET"
     t.varchar_max "REMARKS"
@@ -906,6 +960,8 @@ ActiveRecord::Schema.define(version: 20170705052757) do
   add_foreign_key "ECOLOG", "SENSORS", column: "SENSOR_ID", primary_key: "SENSOR_ID", name: "FK_ECOLOG_SENSORS"
   add_foreign_key "LEAFSPY_RAW", "CARS", column: "CAR_ID", primary_key: "CAR_ID", name: "FK_LEAFSPY_RAW_CARS"
   add_foreign_key "LEAFSPY_RAW", "DRIVERS", column: "DRIVER_ID", primary_key: "DRIVER_ID", name: "FK_LEAFSPY_RAW_DRIVERS"
+  add_foreign_key "LEAFSPY_RAW2", "CARS", column: "CAR_ID", primary_key: "CAR_ID", name: "FK_LEAFSPY_RAW2_CARS"
+  add_foreign_key "LEAFSPY_RAW2", "DRIVERS", column: "DRIVER_ID", primary_key: "DRIVER_ID", name: "FK_LEAFSPY_RAW2_DRIVERS"
   add_foreign_key "PICTURE_RAW", "CARS", column: "CAR_ID", primary_key: "CAR_ID", name: "FK_PICTURE_RAW_CARS"
   add_foreign_key "PICTURE_RAW", "DRIVERS", column: "DRIVER_ID", primary_key: "DRIVER_ID", name: "FK_PICTURE_RAW_DRIVERS"
   add_foreign_key "TRIPS", "CARS", column: "CAR_ID", primary_key: "CAR_ID", name: "FK_TRIPS_CARS"
