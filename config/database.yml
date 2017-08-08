@@ -13,10 +13,11 @@ default: &default
   encoding: utf8
   username: demo
   password: q1q1Q!Q!
-  host: ECOLOGDB2016
+ 
 
 development:
   <<: *default
+  host: ECOLOGDB2016
   database: ECOLOGDBver3
 
 # Warning: The database defined as "test" will be erased and
@@ -24,7 +25,8 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: ECOLOGDBver3
+  host: ECOLOGDB2016
+  database: ECOLOGDBver3_demo
 
 # As with config/secrets.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
