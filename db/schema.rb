@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170705052757) do
+ActiveRecord::Schema.define(version: 20171024034850) do
 
   create_table "100M_SEGMENT", primary_key: ["SEGMENT_ID", "SEMANTIC_LINK_ID"], force: :cascade do |t|
     t.integer "SEGMENT_ID", null: false
@@ -54,6 +54,20 @@ ActiveRecord::Schema.define(version: 20170705052757) do
     t.float "LATITUDE", null: false
     t.float "LONGITUDE", null: false
     t.float "ALTITUDE", null: false
+    t.datetime "ANDROID_TIME"
+  end
+
+  create_table "ANDROID_GPS_RAW_modified", primary_key: ["SENSOR_ID", "JST"], force: :cascade do |t|
+    t.integer "DRIVER_ID", null: false
+    t.integer "CAR_ID", null: false
+    t.integer "SENSOR_ID", null: false
+    t.datetime "JST", null: false
+    t.float "LATITUDE", null: false
+    t.float "LONGITUDE", null: false
+    t.float "ALTITUDE", null: false
+    t.integer "ACCURACY"
+    t.float "SPEED"
+    t.float "BEARING"
     t.datetime "ANDROID_TIME"
   end
 
@@ -134,12 +148,38 @@ ActiveRecord::Schema.define(version: 20170705052757) do
   create_table "CORRECTED_GPS_SPEEDLPF0.05_MM", id: false, force: :cascade do |t|
   end
 
+  create_table "CORRECTED_GPS_modified", primary_key: ["SENSOR_ID", "JST"], force: :cascade do |t|
+    t.integer "DRIVER_ID", null: false
+    t.integer "CAR_ID", null: false
+    t.integer "SENSOR_ID", null: false
+    t.datetime "JST", null: false
+    t.float "LATITUDE", null: false
+    t.float "LONGITUDE", null: false
+    t.float "ALTITUDE", null: false
+    t.real "HEADING", null: false
+    t.real "SPEED"
+    t.real "BEARING"
+    t.real "DISTANCE_DIFFERENCE", null: false
+    t.integer "ACCURACY"
+    t.varchar "LINK_ID", limit: 14
+    t.real "TERRAIN_ALTITUDE"
+    t.real "ROAD_THETA"
+    t.index ["LINK_ID"], name: "FORCorecctedGPSmodify"
+    t.index ["SPEED", "BEARING"], name: "CORRECTEDGPS_isnotnull"
+    t.index ["SPEED", "BEARING"], name: "searchmodified"
+  end
+
   create_table "CORRECTED_PICTURE", primary_key: ["DRIVER_ID", "SENSOR_ID", "JST"], force: :cascade do |t|
     t.integer "DRIVER_ID", null: false
     t.integer "CAR_ID", null: false
     t.integer "SENSOR_ID", null: false
     t.datetime "JST", null: false
     t.binary "PICTURE", null: false
+    t.index ["DRIVER_ID", "JST"], name: "ForPicuture"
+  end
+
+  create_table "DIRECTION_TO_DEGREE", primary_key: "DIRECTION", id: :string, limit: 10, default: nil, force: :cascade do |t|
+    t.real "DEGREE", null: false
   end
 
   create_table "DRIVERS", primary_key: "DRIVER_ID", id: :integer, default: nil, force: :cascade do |t|
@@ -267,6 +307,7 @@ ActiveRecord::Schema.define(version: 20170705052757) do
     t.integer "MESH_ID"
     t.varchar "LINK_ID", limit: 14
     t.real "ROAD_THETA"
+    t.index ["SENSOR_ID", "JST"], name: "forCHECKLINKID"
   end
 
   create_table "ECOLOG_LPF_EX_LINKS_LOOKUP", primary_key: ["TRIP_ID", "JST"], force: :cascade do |t|
@@ -445,6 +486,79 @@ ActiveRecord::Schema.define(version: 20170705052757) do
     t.integer "GIDS_DIFFERENCE", null: false
   end
 
+  create_table "GPGGA_RAW", id: false, force: :cascade do |t|
+    t.datetime "ANDROID_TIME", null: false
+    t.integer "SENSOR_ID", null: false
+    t.integer "DRIVER_ID", null: false
+    t.integer "CAR_ID", null: false
+    t.real "UTC_TIME", null: false
+    t.float "LATITUDE"
+    t.nchar "N_OR_S", limit: 1
+    t.float "LONGITUDE"
+    t.nchar "E_OR_W", limit: 1
+    t.integer "POSITION_IDENTIFICATION_QUALITY", null: false
+    t.integer "NUMBER_OF_USING_SATELLITES", null: false
+    t.real "HDOP"
+    t.real "HEIGHT_OF_ANTENNA"
+    t.nchar "UNIT_OF_ANTENNA", limit: 1, null: false
+    t.real "HEIGHT_OF_GEOID"
+    t.nchar "UNIT_OF_GEOID", limit: 1, null: false
+    t.float "DGPS_TIME"
+    t.integer "DGPS_STATION_ID"
+    t.nchar "CHECK_SUM", limit: 2, null: false
+  end
+
+  create_table "GPGSA_RAW", id: false, force: :cascade do |t|
+    t.datetime "ANDROID_TIME", null: false
+    t.integer "SENSOR_ID", null: false
+    t.integer "DRIVER_ID", null: false
+    t.integer "CAR_ID", null: false
+    t.nchar "MODE", limit: 1, null: false
+    t.integer "IDENTIFICATION_TYPE", null: false
+    t.integer "SATELLITE_NUMBER", null: false
+    t.real "PDOP", null: false
+    t.real "HDOP", null: false
+    t.real "VDOP", null: false
+    t.nchar "CHECK_SUM", limit: 2, null: false
+  end
+
+  create_table "GPGSV_RAW", id: false, force: :cascade do |t|
+    t.datetime "ANDROID_TIME", null: false
+    t.integer "SENSOR_ID", null: false
+    t.integer "DRIVER_ID", null: false
+    t.integer "CAR_ID", null: false
+    t.integer "NUMBER_OF_ALL_SENTENCES", null: false
+    t.integer "SENTENCE_NUMBER", null: false
+    t.integer "NUMBER_OF_ALL_SATELLITES", null: false
+    t.integer "SATELLITE_NUMBER", null: false
+    t.integer "ELEVATION", null: false
+    t.integer "AZIMUTH", null: false
+    t.integer "SN_RATIO"
+    t.nchar "CHECK_SUM", limit: 2, null: false
+  end
+
+  create_table "GPRMC_RAW", primary_key: ["ANDROID_TIME", "SENSOR_ID"], force: :cascade do |t|
+    t.datetime "ANDROID_TIME", null: false
+    t.integer "SENSOR_ID", null: false
+    t.integer "DRIVER_ID", null: false
+    t.integer "CAR_ID", null: false
+    t.real "UTC_TIME", null: false
+    t.nchar "STATUS", limit: 1, null: false
+    t.float "LATITUDE"
+    t.nchar "N_OR_S", limit: 1
+    t.float "LONGITUDE"
+    t.nchar "E_OR_W", limit: 1
+    t.real "MOVING_SPEED"
+    t.real "MOVING_AZIMUTH"
+    t.real "UTC_DATE", null: false
+    t.float "MAGNETIC_VARIATION"
+    t.nchar "MAGNETIC_VARIATION_DECLINATION", limit: 1
+    t.nchar "MODE", limit: 1
+    t.nchar "CHECK_SUM", limit: 2
+    t.datetime "JST", null: false
+    t.index ["SENSOR_ID", "JST"], name: "GPRMCisnotnull"
+  end
+
   create_table "GPS_TIMESTAMP_100M_SEGMENT", primary_key: ["TRIP_ID", "JST"], force: :cascade do |t|
     t.integer "SEGMENT_ID", null: false
     t.integer "SEMANTIC_LINK_ID", null: false
@@ -462,6 +576,7 @@ ActiveRecord::Schema.define(version: 20170705052757) do
     t.integer "SENSOR_ID", null: false
     t.datetime "DATETIME", null: false
     t.float "ILLUMINANCE", null: false
+    t.index ["DRIVER_ID", "CAR_ID", "SENSOR_ID", "DATETIME"], name: "IlluminanceRaw2index"
   end
 
   create_table "LEAFSPY_AC", primary_key: "TRIP_ID", id: :integer, default: nil, force: :cascade do |t|
@@ -578,6 +693,8 @@ ActiveRecord::Schema.define(version: 20170705052757) do
     t.integer "PLUG_STATE"
     t.integer "CHARGE_MODE"
     t.integer "OBC_OUT_PWR"
+    t.index ["TRIP_ID", "DATETIME"], name: "LEAFSPYRAW2index"
+    t.index ["TRIP_ID"], name: "leafspyall2"
   end
 
   create_table "LEAFSPY_RAW_FULLCHARGELOSS", primary_key: ["EXPERIMENT_ID", "DATETIME"], force: :cascade do |t|
@@ -716,6 +833,40 @@ ActiveRecord::Schema.define(version: 20170705052757) do
     t.varchar_max "PICTURE", null: false
   end
 
+  create_table "POWER_TESTER_VALUE", primary_key: "DATE", id: :datetime, default: nil, force: :cascade do |t|
+    t.float "CHARGE", null: false
+    t.float "DISCHARGE", null: false
+  end
+
+  create_table "QZGSA_RAW", id: false, force: :cascade do |t|
+    t.datetime "ANDROID_TIME", null: false
+    t.integer "SENSOR_ID", null: false
+    t.integer "DRIVER_ID", null: false
+    t.integer "CAR_ID", null: false
+    t.nchar "MODE", limit: 1, null: false
+    t.integer "IDENTIFICATION_TYPE", null: false
+    t.integer "SATELLITE_NUMBER", null: false
+    t.real "PDOP", null: false
+    t.real "HDOP", null: false
+    t.real "VDOP", null: false
+    t.nchar "CHECK_SUM", limit: 2, null: false
+  end
+
+  create_table "QZGSV_RAW", id: false, force: :cascade do |t|
+    t.datetime "ANDROID_TIME", null: false
+    t.integer "SENSOR_ID", null: false
+    t.integer "DRIVER_ID", null: false
+    t.integer "CAR_ID", null: false
+    t.integer "NUMBER_OF_ALL_SENTENCES", null: false
+    t.integer "SENTENCE_NUMBER", null: false
+    t.integer "NUMBER_OF_ALL_SATELLITES", null: false
+    t.integer "SATELLITE_NUMBER", null: false
+    t.integer "ELEVATION", null: false
+    t.integer "AZIMUTH", null: false
+    t.integer "SN_RATIO"
+    t.nchar "CHECK_SUM", limit: 2, null: false
+  end
+
   create_table "SEMANTIC_LINKS", primary_key: ["SEMANTIC_LINK_ID", "DRIVER_ID", "LINK_ID"], force: :cascade do |t|
     t.integer "SEMANTIC_LINK_ID", null: false
     t.integer "DRIVER_ID", null: false
@@ -743,6 +894,25 @@ ActiveRecord::Schema.define(version: 20170705052757) do
     t.real "CONSUMED_ENERGY"
     t.varchar "TRIP_DIRECTION", limit: 10
     t.varchar "VALIDATION", limit: 10
+  end
+
+  create_table "TRIPS_FCL", primary_key: "TRIP_ID", id: :integer, default: nil, force: :cascade do |t|
+    t.integer "SENSOR_ID", null: false
+    t.varchar "TRIP_DIRECTION", limit: 10, null: false
+    t.datetime "START_TIME"
+    t.datetime "END_TIME"
+    t.integer "TRIP_TIME_SEC"
+    t.integer "START_GIDs", null: false
+    t.integer "SOH", null: false
+    t.real "CAN_CONSUMED_ENERGY", null: false
+    t.real "ECOLOG_CONSUMED_ENERGY", null: false
+    t.real "MOTOR_ENERGY"
+    t.real "AUX_ENERGY"
+    t.real "AC_ENERGY"
+    t.real "EST_AC_ENERGY"
+    t.real "EST_HTR_ENERGY"
+    t.real "FCL_ENERGY"
+    t.real "TEMPERATURE", null: false
   end
 
   create_table "TRIPS_LINKS_LOOKUP", primary_key: "TRIP_ID", id: :integer, default: nil, force: :cascade do |t|
@@ -901,6 +1071,18 @@ ActiveRecord::Schema.define(version: 20170705052757) do
   create_table "TRIPS_RAW_SPEEDLPF0.05_MM_LINKS_LOOKUP2", id: false, force: :cascade do |t|
   end
 
+  create_table "TRIPS_RAW_modified", primary_key: ["DRIVER_ID", "SENSOR_ID", "START_TIME", "END_TIME"], force: :cascade do |t|
+    t.integer "DRIVER_ID", null: false
+    t.integer "CAR_ID", null: false
+    t.integer "SENSOR_ID", null: false
+    t.datetime "START_TIME", null: false
+    t.datetime "END_TIME", null: false
+    t.float "START_LATITUDE"
+    t.float "START_LONGITUDE"
+    t.float "END_LATITUDE"
+    t.float "END_LONGITUDE"
+  end
+
   create_table "TRIPS_SPEEDLPF0.05_MM", id: false, force: :cascade do |t|
   end
 
@@ -908,6 +1090,21 @@ ActiveRecord::Schema.define(version: 20170705052757) do
   end
 
   create_table "TRIPS_SPEEDLPF0.05_MM_LINKS_LOOKUP2", id: false, force: :cascade do |t|
+  end
+
+  create_table "TRIPS_modified", primary_key: "TRIP_ID", id: :integer, default: nil, force: :cascade do |t|
+    t.integer "DRIVER_ID", null: false
+    t.integer "CAR_ID", null: false
+    t.integer "SENSOR_ID", null: false
+    t.datetime "START_TIME", null: false
+    t.datetime "END_TIME", null: false
+    t.float "START_LATITUDE"
+    t.float "START_LONGITUDE"
+    t.float "END_LATITUDE"
+    t.float "END_LONGITUDE"
+    t.real "CONSUMED_ENERGY"
+    t.varchar "TRIP_DIRECTION", limit: 10
+    t.varchar "VALIDATION", limit: 10
   end
 
   create_table "WEATHER", primary_key: ["PLACE", "DATETIME"], force: :cascade do |t|
@@ -924,6 +1121,15 @@ ActiveRecord::Schema.define(version: 20170705052757) do
     t.real "MAX_WIND_SPEED", null: false
     t.varchar "MAX_WIND_DIRECTION", limit: 10, null: false
     t.integer "SUNLIGHT"
+    t.index ["DATETIME", "LAST_10MIN_DATETIME", "TEMPERATURE"], name: "WEATHER_JOIN"
+    t.index ["MAX_WIND_DIRECTION"], name: "ConvertDirectiontoDegree"
+  end
+
+  create_table "scaffold_samples", force: :cascade do |t|
+    t.string "name"
+    t.integer "age"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "sysdiagrams", primary_key: "diagram_id", id: :integer, force: :cascade do |t|

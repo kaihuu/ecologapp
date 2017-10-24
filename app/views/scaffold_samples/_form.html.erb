@@ -1,0 +1,27 @@
+<%= form_with(model: scaffold_sample, local: true) do |form| %>
+  <% if scaffold_sample.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(scaffold_sample.errors.count, "error") %> prohibited this scaffold_sample from being saved:</h2>
+
+      <ul>
+      <% scaffold_sample.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name, id: :scaffold_sample_name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :age %>
+    <%= form.number_field :age, id: :scaffold_sample_age %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

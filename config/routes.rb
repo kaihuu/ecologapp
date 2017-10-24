@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :scaffold_samples
   get 'monthly/index'
 
   get 'monthly/view'

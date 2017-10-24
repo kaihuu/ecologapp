@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @scaffold_sample.name %>
+</p>
+
+<p>
+  <strong>Age:</strong>
+  <%= @scaffold_sample.age %>
+</p>
+
+<%= link_to 'Edit', edit_scaffold_sample_path(@scaffold_sample) %> |
+<%= link_to 'Back', scaffold_samples_path %>
